@@ -47,22 +47,23 @@
    lsusb
    ```
 
-В ответ вы должны получить что-то наподобие:
+  В ответ вы должны получить что-то наподобие:
 
-```bash
-Bus 008 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-Bus 007 Device 003: ID 12d1:1001 Huawei Technologies Co., Ltd. E161/E169/E620/E800 HSDPA Modem
-Bus 007 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-```
+  ```bash
+  Bus 008 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+  Bus 007 Device 003: ID 12d1:1001 Huawei Technologies Co., Ltd. E161/E169/E620/E800 HSDPA Modem
+  Bus 007 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+  ```
 
-Прекрасно модем определился - мы запомним из данного вывода manufacture id данного устройства - `12d1:1001`. `12d1` — это код поставщика для Huawei, а строка, идущая за этим кодом (в моём случае — `1001`) — это ID продукта.
-Если система, после подключения модема, создаст /dev/ttyUSB0, это значит, что всё сделано правильно. Проверить это можем с помощью команд:
+  Прекрасно модем определился - мы запомним из данного вывода manufacture id данного устройства - `12d1:1001`. `12d1` — это код поставщика для Huawei, а строка, идущая за этим кодом (в моём случае — `1001`) — это ID продукта.
+  Если система, после подключения модема, создаст /dev/ttyUSB0, это значит, что всё сделано правильно. Проверить это можем с помощью команд:
 
    ```bash
    dmesg | grep tty
 [287645.840210] usb 7-1: GSM modem (1-port) converter now attached to ttyUSB1
 [287645.876674] usb 7-1: GSM modem (1-port) converter now attached to ttyUSB2
 [287645.913216] usb 7-1: GSM modem (1-port) converter now attached to ttyUSB3
+
    ls -al /dev/ttyUSB*
 crw-rw---- 1 root dialout 188, 1 Feb  6 22:15 /dev/ttyUSB1
 crw-rw---- 1 root dialout 188, 2 Feb  6 22:15 /dev/ttyUSB2
