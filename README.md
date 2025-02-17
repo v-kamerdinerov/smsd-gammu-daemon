@@ -127,14 +127,14 @@ SIM IMSI             : 401770091187972
 
 На этом шаге мы получаем настроенный модем и gammu будет готов обрабатывать наши полученные сообщения. Ключевым тут является скрипт который, запускается при каждом полученном сообщении - `RunOnReceive = /var/lib/my-awesome-python-script.py`.
 
-Его пример мы можем найти тут - [sms-to-telegram-forwarder.py](./playbooks/roles/gammu-smsd/templates/sms-to-tg-fwdr.py). 
+Его пример мы можем найти тут - [sms-to-telegram.py](./playbooks/roles/gammu-smsd/templates/sms-to-telegram.py). 
 
 В нем необходимо заполнить лишь следующее - номер телефона и данные нашего TG - бота, который мы конечно же заблаговременно [создали заранее.~нет~](https://www.directual.com/lesson-library/how-to-create-a-telegram-bot)
 
   ```python
 phone = "+79000000000"
 CHAT_ID = "-667408572"
-TOKEN = "337200:CoDeForMyAwEsOmEBoT"
+TOKEN = "334200:CoDeForMyAwEsOmEBoT"
   ```
 
 3. Осталось запустить systemd демон для работы gammu
