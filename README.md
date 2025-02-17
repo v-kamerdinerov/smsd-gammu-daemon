@@ -169,7 +169,7 @@ Feb 17 10:46:30 orangepi5 systemd[1]: Started SMS daemon for Gammu.
 
 4. Проверкой результатов будет отправка любого сообщения на ваш номер и трепетное ожидание его в вашем ТГ канале
 
-![message](./imgs/message.png)
+<p align="center"><img src="./imgs/message.png"></p>
 
 ## ⚙️ Автоматизация с Ansible
 
