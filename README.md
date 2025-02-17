@@ -108,7 +108,7 @@ debuglevel = 1 # уровень детализации логов (1 — мин�
 SMSC = +77476934219 # номер центра SMS-сообщений (SMSC), необходим для отправки SMS
 CheckSecurity = 0 # отключить проверку безопасности PIN-кода SIM-карты
 
-RunOnReceive = /opt/sms-forwarder/src/main.py # путь к скрипту, который запускается при получении SMS
+RunOnReceive = /var/lib/my-awesome-python-script.py # путь к скрипту, который запускается при получении SMS
 
 inboxpath = /var/spool/gammu/inbox/ # папка для входящих SMS
 outboxpath = /var/spool/gammu/outbox/ # папка для SMS, подготовленных к отправке
@@ -128,12 +128,58 @@ IMEI                 : 863448212120472
 SIM IMSI             : 401770091187972
   ```
 
+На этом шаге мы получаем настроенный модем и gammu будет готов обрабатывать наши полученные сообщения. Ключевым тут является скрипт который, запускается при каждом полученном сообщении - `RunOnReceive = /var/lib/my-awesome-python-script.py`.
+
+Его пример мы можем найти тут - [sms-to-telegram-forwarder.py](./playbooks/roles/gammu-smsd/templates/sms-to-tg-fwdr.py). 
+
+В нем необходимо заполнить лишь следующее - номер телефона и данные нашего TG - бота, который мы конечно же заблаговременно [создали заранее.~нет~](https://www.directual.com/lesson-library/how-to-create-a-telegram-bot)
+
+  ```python
+phone = "+79000000000"
+CHAT_ID = "-667408572"
+TOKEN = "337200:CoDeForMyAwEsOmEBoT"
+  ```
+
+3. Осталось запустить systemd демон для работы gammu
+
+  ```bash
+systemctl start gammu-smsd.service
+systemctl enable gammu-smsd.service
+systemctl status gammu-smsd.service
+● gammu-smsd.service - SMS daemon for Gammu
+     Loaded: loaded (/lib/systemd/system/gammu-smsd.service; enabled; vendor preset: enabled)
+     Active: active (running) since Mon 2025-02-17 10:46:30 MSK; 54min ago
+       Docs: man:gammu-smsd(1)
+    Process: 522079 ExecStart=/usr/bin/gammu-smsd --pid=/run/gammu-smsd.pid --daemon (code=exited, status=0/SUCCESS)
+   Main PID: 522080 (gammu-smsd)
+      Tasks: 1 (limit: 9040)
+     Memory: 2.1M
+        CPU: 1.230s
+     CGroup: /system.slice/gammu-smsd.service
+             └─522080 /usr/bin/gammu-smsd --pid=/run/gammu-smsd.pid --daemon
+
+Feb 17 10:46:30 orangepi5 gammu-smsd[522079]: mode: Send=1, Receive=1
+Feb 17 10:46:30 orangepi5 gammu-smsd[522079]: deliveryreport = no
+Feb 17 10:46:30 orangepi5 gammu-smsd[522079]: phoneid =
+Feb 17 10:46:30 orangepi5 gammu-smsd[522079]: Inbox is "/var/spool/gammu/inbox/" with format "standard"
+Feb 17 10:46:30 orangepi5 gammu-smsd[522079]: Outbox is "/var/spool/gammu/outbox/" with format "detail" and transmission format "7bit"
+Feb 17 10:46:30 orangepi5 gammu-smsd[522079]: Sent SMS moved to "/var/spool/gammu/sent/"
+Feb 17 10:46:30 orangepi5 gammu-smsd[522079]: SMS with errors moved to "/var/spool/gammu/error/"
+Feb 17 10:46:30 orangepi5 gammu-smsd[522080]: Created POSIX RW shared memory at 0x7fa2728000
+Feb 17 10:46:30 orangepi5 gammu-smsd[522080]: Starting phone communication...
+Feb 17 10:46:30 orangepi5 systemd[1]: Started SMS daemon for Gammu.
+  ```
+
+4. Проверкой результатов будет отправка любого сообщения на ваш номер и трепетное ожидание его в вашем ТГ канале
+
+![message](./imgs/message.png)
+
 ## ⚙️ Автоматизация с Ansible
 ## 💡 Полезные советы и рекомендации
 
 ### Настройка udev правил
 
-У модемов есть свойство - менять свой ttyd в зависимости от фазы луны, солнцестояния и курс доллара. Хорошим решением будет зафикисровать этот самый ttyd с помощью правил udev. При подключении модема к одноплатнику мы выяснили manufacture id нашего устройства.
+У модемов есть свойство - менять свой ttyID в зависимости от фазы луны, солнцестояния и курса доллара. Хорошим решением будет зафиксировать этот самый ttyID с помощью правил udev. При подключении модема к одноплатнику мы выяснили manufacture id нашего устройства.
 
   ```bash
   Bus 008 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
@@ -166,3 +212,5 @@ SUBSYSTEM=="tty", ATTRS{idVendor}=="12d1", ATTRS{idProduct}== "1001", SYMLINK+="
   ```
 
 ## ⚠️ Ошибки и устранение неполадок
+
+### Отвалы модема
