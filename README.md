@@ -239,6 +239,8 @@ lrwxrwxrwx 1 root root 7 Feb 17 10:41 /dev/sms -> ttyUSB3
 
 Для запуска потребуются systemd-юнит и таймер для него:
 
+`/etc/systemd/system/watcher.service`
+
 ```bash
 [Unit]
 Description=Watcher Service
@@ -251,6 +253,8 @@ ExecStart=/usr/bin/python3 /opt/watcher.py
 [Install]
 WantedBy=multi-user.targe
 ```
+
+`/etc/systemd/system/watcher.timer`
 
 ```bash
 [Unit]
