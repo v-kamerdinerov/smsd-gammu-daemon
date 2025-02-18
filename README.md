@@ -100,7 +100,7 @@
    IMEI                 : 863448212120472
    SIM IMSI             : 401770091187972
    ```
-3. Ключевым тут является скрипт, который запускается при каждом полученном сообщении — `RunOnReceive = /opt/my-awesome-python-script.py`. Его пример можно найти [здесь](./playbooks/roles/gammu-smsd/templates/sms-to-telegram.py). В нём необходимо заполнить лишь следующее — номер телефона и данные нашего TG-бота, который мы, конечно же, заблаговременно [создали заранее~нет~](https://www.directual.com/lesson-library/how-to-create-a-telegram-bot).
+3. Ключевым тут является скрипт, который запускается при каждом полученном сообщении — `RunOnReceive = /opt/my-awesome-python-script.py`. Его пример можно найти [здесь](./playbooks/roles/gammu-smsd/templates/sms-to-telegram.py.j2). В нём необходимо заполнить лишь следующее — номер телефона и данные нашего TG-бота, который мы, конечно же, заблаговременно [создали заранее~нет~](https://www.directual.com/lesson-library/how-to-create-a-telegram-bot).
    ```python
    phone = "+79000000000"
    CHAT_ID = "-667408572"
