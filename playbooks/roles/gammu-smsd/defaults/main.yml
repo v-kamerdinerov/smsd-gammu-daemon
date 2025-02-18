@@ -1,0 +1,22 @@
+---
+gammu_telegram_chat_id: ""
+gammu_telegram_token: ""
+gammu_number: ""
+
+gammu_packages_list:
+  - gammu
+  - gammu-smsd
+
+gammu_ttyd: "sms"
+
+gammu_dirs:
+  - script_dir: "/opt/sms-forwarder"
+
+gammu_main_script_path: "{{ gammu_dirs | json_query('[*].script_dir') | first }}/sms-to-telegram.py"
+
+gammu_inboxpath: "/var/spool/gammu/inbox/"
+gammu_outboxpath: "/var/spool/gammu/outbox/"
+gammu_sentsmspath: "/var/spool/gammu/sent/"
+gammu_errorsmspath: "/var/spool/gammu/error/"
+
+gammu_watcher_cron: "*:0/15"

@@ -1,0 +1,18 @@
+{{ ansible_managed | comment }}
+[gammu]
+
+port = /dev/{{ gammu_ttyd }}
+connection = at
+
+[smsd]
+service = files
+logfile = syslog
+debuglevel = 1
+CheckSecurity = 0
+
+RunOnReceive = {{ gammu_main_script_path }}
+
+inboxpath = {{ gammu_inboxpath }}
+outboxpath = {{ gammu_outboxpath }}
+sentsmspath = {{ gammu_sentsmspath }}
+errorsmspath = {{ gammu_errorsmspath }}

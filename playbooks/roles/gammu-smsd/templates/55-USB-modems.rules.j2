@@ -1,0 +1,2 @@
+{{ ansible_managed | comment }}
+SUBSYSTEM=="tty", ATTRS{idVendor}=="{{ vendor_code | d('12d1') }}", ATTRS{idProduct}== "{{ device_id }}", SYMLINK+="{{ gammu_ttyd }}"

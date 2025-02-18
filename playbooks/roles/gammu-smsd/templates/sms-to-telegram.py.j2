@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+from __future__ import print_function
+import os
+import telegram
+from telegram.error import TelegramError
+import logging
+import asyncio
+
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
+
+numparts = int(os.environ["DECODED_PARTS"])
+
+text = ""
+icon = "📝"
+
+# configuration
+phone = "{{ gammu_number }}"
+CHAT_ID = "{{ gammu_telegram_chat_id }}"
+TOKEN = "{{ gammu_telegram_token }}"
+
+# Are there any decoded parts?
+if numparts == 0:
+    text = os.environ["SMS_1_TEXT"]
+# Get all text parts
+else:
+    for i in range(1, numparts + 1):
+        varname = "DECODED_%d_TEXT" % i
+        if varname in os.environ:
+            text = text + os.environ[varname]
+
+
+# Send by Telegram
+async def send_telegram_message():
+    try:
+        bot = telegram.Bot(token=TOKEN)
+        await bot.send_message(
+            CHAT_ID,
+            text=icon
+            + ": "
+            + phone
+            + "\n"
+            + os.environ["SMS_1_NUMBER"].strip()
+            + " | "
+            + text,
+        )
+    except TelegramError as e:
+        logging.error(f"An error occurred while sending a message via Telegram: {e}")
+
+
+# Run async function in cycle asyncio
+asyncio.run(send_telegram_message())
+
+logging.info(
+    f"Number {os.getenv('SMS_1_NUMBER', 'default_number')} have sent text: {text}"
+)

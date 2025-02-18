@@ -1,0 +1,100 @@
+---
+- name: "Gammu | Collect USB facts"
+  community.general.usb_facts: {}
+
+- name: "Gammu | Find Huawei device"
+  set_fact:
+    huawei_usb_id: "{{ (ansible_facts.usb_devices | selectattr('name', 'search', 'Huawei') | map(attribute='id') | list).0 | default('') }}"
+
+- name: "Gammu | Fail if Huawei device not found"
+  fail:
+    msg: "Huawei USB device not found"
+  when: not huawei_usb_id
+
+- name: "Gammu | Split Huawei USB ID into vendor_code and device_id"
+  set_fact:
+    vendor_code: "{{ huawei_usb_id.split(':')[0] }}"
+    device_id: "{{ huawei_usb_id.split(':')[1] }}"
+
+- name: "Gammu | Debug vendor_code and device_id"
+  debug:
+    msg:
+      - "Vendor Code: {{ vendor_code }}"
+      - "Device ID: {{ device_id }}"
+      - "USB device ID: {{ huawei_usb_id }}"
+  tags: ['debug']
+
+- name: "Gammu | Update package cache"
+  package:
+    update_cache: true
+  tags: ['install']
+
+- name: "Gammu | Install gammu-smsd packages"
+  package:
+    name: "{{ gammu_packages_list }}"
+    state: present
+  tags: ['install']
+
+- name: "Gammu | Create folders"
+  ansible.builtin.file:
+    path: "{{ item.value }}"
+    state: directory
+    recurse: true
+    owner: root
+    group: root
+  with_dict: "{{ gammu_dirs }}"
+  tags: ['config']
+
+- name: "Gammu | Configure system"
+  block:
+    - name: "Template udev rules"
+      template:
+        src: 55-USB-modems.rules.j2
+        dest: "/etc/udev/rules.d/55-USB-modems.rules"
+        mode: "0644"
+      notify: "udev_updated"
+
+    - name: "Template gammu-smsd config"
+      template:
+        src: gammu-smsdrc.j2
+        dest: "/etc/gammu-smsdrc"
+        mode: "0644"
+
+    - name: "Template python executable script"
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dst }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - {src: sms-to-telegram.py.j2, dst: "{{ gammu_main_script_path }}", mode: "0755"}
+
+    - name: "Add watcher script"
+      copy:
+        src: "watcher.py"
+        dest: "{{ gammu_dirs | json_query('[*].script_dir') | first }}/watcher.py"
+        mode: "0755"
+
+    - name: "Create systemd units for watcher"
+      template:
+        src: "{{ item.src }}"
+        dest: "/etc/systemd/system/{{ item.dst }}"
+        mode: "0644"
+      loop:
+        - { src: watcher.service.j2, dst: watcher.service }
+        - { src: watcher.timer.j2, dst: watcher.timer }
+  tags: ['config']
+
+
+- name: "Gammu | Start and enable services"
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  loop:
+    - gammu-smsd.service
+    - watcher.service
+    - watcher.timer
+  loop_control:
+    label: "{{ item }}"
+  tags: ['service']

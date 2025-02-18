@@ -1,0 +1,9 @@
+---
+- name: "Deploy gammu-smsd daemon"
+  hosts: "gammu-nodes"
+  gather_facts: false
+  become: true
+  tasks:
+    - name: "Import gammu-smsd role"
+      import_role:
+        name: gammu-smsd

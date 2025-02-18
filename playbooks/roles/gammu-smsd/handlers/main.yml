@@ -1,0 +1,6 @@
+---
+- name: "Gammu | Reload udev rules"
+  command: udevadm control --reload-rules && udevadm trigger
+  register: udevadm_status
+  changed_when: udevadm_status.rc == 0
+  listen: "udev_updated"

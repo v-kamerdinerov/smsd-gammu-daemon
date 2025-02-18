@@ -1,0 +1,8 @@
+[Unit]
+Description=Watcher Timer
+
+[Timer]
+OnCalendar={{ gammu_watcher_cron }}
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=Watcher Service
+After=network.target gammu-smsd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 {{ gammu_dirs | json_query('[*].script_dir') | first }}/watcher.py
+
+[Install]
+WantedBy=multi-user.target
