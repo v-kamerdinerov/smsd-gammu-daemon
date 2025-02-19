@@ -235,13 +235,13 @@ usb_modeswitch -W -v 12d1 -p 1001 -K -P 14ac -M "5553424300000000000000000000001
 Либо можем создать правило, чтобы делать это каждый раз при подключении:
 
 - `/etc/usb_modeswitch.d/12d1:1446`
-```bash
-DefaultVendor=0x12d1
-DefaultProduct=0x1446
-TargetVendor=0x12d1
-TargetProduct=0x1506
-MessageContent="55534243000000000000000000000011060000000000000000000000000000"
-```
+  ```bash
+  DefaultVendor=0x12d1
+  DefaultProduct=0x1446
+  TargetVendor=0x12d1
+  TargetProduct=0x1506
+  MessageContent="55534243000000000000000000000011060000000000000000000000000000"
+  ```
 И перезапустим сервис `usb_modeswitch`:
 ```bash
 sudo systemctl restart usb_modeswitch
