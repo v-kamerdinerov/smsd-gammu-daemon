@@ -225,8 +225,9 @@ usb_modeswitch -W -v 12d1 -p 1001 -K -P 14ac -M "5553424300000000000000000000001
 - `-M`: Специальная управляющая команда (Huawei Modeswitch Message)
 
 Либо можем создать правило, чтобы делать это каждый раз при подключении:
+
+- `/etc/usb_modeswitch.d/12d1:1446`
 ```bash
-vi /etc/usb_modeswitch.d/12d1:1446
 DefaultVendor=0x12d1
 DefaultProduct=0x1446
 TargetVendor=0x12d1
