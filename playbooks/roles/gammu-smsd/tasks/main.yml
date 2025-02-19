@@ -1,20 +1,24 @@
 ---
 - name: "Gammu | Collect USB facts"
   community.general.usb_facts: {}
+  tags: ['debug']
 
 - name: "Gammu | Find Huawei device"
   set_fact:
     huawei_usb_id: "{{ (ansible_facts.usb_devices | selectattr('name', 'search', 'Huawei') | map(attribute='id') | list).0 | default('') }}"
+  tags: ['debug']
 
 - name: "Gammu | Fail if Huawei device not found"
   fail:
     msg: "Huawei USB device not found"
+  tags: ['debug']
   when: not huawei_usb_id
 
 - name: "Gammu | Split Huawei USB ID into vendor_code and device_id"
   set_fact:
     vendor_code: "{{ huawei_usb_id.split(':')[0] }}"
     device_id: "{{ huawei_usb_id.split(':')[1] }}"
+  tags: ['debug']
 
 - name: "Gammu | Debug vendor_code and device_id"
   debug:
